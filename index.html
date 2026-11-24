@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5ZZHCLBQ');</script>
+<!-- End Google Tag Manager -->
 <title>Escritório de Arquitetura no Rio de Janeiro | Rafael Mirza</title>
 <meta name="description" content="Escritório de arquitetura no Rio de Janeiro e Região Serrana. Projeto de arquitetura e gerenciamento completo da obra de apartamentos e casas, há mais de 20 anos.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,6 +78,7 @@ color:#fff;font:15px Montserrat,sans-serif}
 .lead input::placeholder{color:rgba(255,255,255,.8)}
 .lead input[aria-invalid=true]{border-color:#ff9b8a}
 .lead .btn{flex:0 0 auto}
+.lead .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .on-light input{border-color:#cfcbc3;background:#fff;color:var(--ink)}
 .on-light input::placeholder{color:#8a8a8a}
 .lead .msg{flex-basis:100%;font-size:12px;margin:2px 0 0;opacity:.85;min-height:18px}
@@ -150,6 +158,10 @@ header .btn{display:none}.logo img{height:38px}
 </style>
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5ZZHCLBQ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
 <header>
   <div class="wrap">
@@ -269,9 +281,9 @@ header .btn{display:none}.logo img{height:38px}
 
 <footer>
   <div class="wrap">
-    <span>Rafael Mirza Arquitetura e Design</span>
-    <span>Av. Evandro Lins e Silva, 840, sala 621, Barra da Tijuca, Rio de Janeiro</span>
-    <a href="https://www.instagram.com/rafael_mirza/" target="_blank" rel="noopener">Instagram @rafael_mirza</a>
+    <span>Rafael Mirza Arquitetura e Design · CNPJ 18.135.781/0001-97</span>
+    <a href="https://maps.app.goo.gl/hEQVkcpqLbViqLbN7" target="_blank" rel="noopener" data-link="maps">Av. Evandro Lins e Silva, 840, sala 621, Barra da Tijuca, Rio de Janeiro</a>
+    <a href="https://www.instagram.com/rafael_mirza/" target="_blank" rel="noopener" data-link="instagram">Instagram @rafael_mirza</a>
   </div>
 </footer>
 
@@ -279,7 +291,40 @@ header .btn{display:none}.logo img{height:38px}
 
 <script>
 {
-const WHATSAPP = '5521999873135'; // número comercial do escritório
+const CONFIG = {
+  whatsapp: '5521999873135', // número comercial do escritório
+  // Webhook do n8n que cria o card no Trello do Rafael (workflow "[SITE] Lead Rafael Mirza - LP Google")
+  webhook: 'https://n8n-n8n.k4iwwe.easypanel.host/webhook/site-lead-rafael-mirza',
+  funil: 'rafaelmirza_lp_google'
+};
+window.dataLayer = window.dataLayer || [];
+const dl = o => window.dataLayer.push(o);
+
+/* ===== Origem do visitante: guarda gclid/gbraid/wbraid/fbclid/UTMs por 90 dias (vale se ele voltar depois) ===== */
+const qs = new URLSearchParams(location.search);
+const CHAVES = ['gclid', 'gbraid', 'wbraid', 'fbclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+const ler = k => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+const gravar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const pagina = () => location.href.split('#')[0].slice(0, 500);
+const origem = (() => {
+  let salvo = ler('rm_origem');
+  if (salvo && Date.now() - (salvo.ts || 0) > 90 * 864e5) salvo = null;
+  const agora = {};
+  CHAVES.forEach(k => { const v = qs.get(k); if (v) agora[k] = v.slice(0, 300); });
+  if (Object.keys(agora).length) { // clique novo de anúncio ou link substitui o anterior (último clique)
+    salvo = { ...agora, landing: pagina(), referrer: document.referrer.slice(0, 300), ts: Date.now() };
+    gravar('rm_origem', salvo);
+  }
+  return salvo || { landing: pagina(), referrer: document.referrer.slice(0, 300) };
+})();
+const fonte = o => o.gclid || o.gbraid || o.wbraid ? 'google_ads'
+  : o.fbclid || /facebook|instagram|meta/i.test(o.utm_source || '') ? 'meta_ads'
+  : o.utm_source || (o.referrer ? 'referencia' : 'direto');
+const dispositivo = matchMedia('(max-width: 900px)').matches ? 'mobile' : 'desktop';
+
+dl({ event: 'page_context', funnel: CONFIG.funil, traffic_source: fonte(origem), variant: qs.get('r') || 'padrao',
+     device: dispositivo, has_gclid: !!(origem.gclid || origem.gbraid || origem.wbraid),
+     utm_source: origem.utm_source || '', utm_medium: origem.utm_medium || '', utm_campaign: origem.utm_campaign || '' });
 
 /* Imagens do site oficial (rafaelmirza.com.br), no tamanho de cada espaço */
 const wix = (id, w, h) => `https://static.wixstatic.com/media/${id}/v1/fill/w_${w},h_${h},al_c,q_85,enc_auto/${id.split('~')[0]}.jpg`;
@@ -303,7 +348,6 @@ document.querySelectorAll('img[data-wix]').forEach(img => {
 });
 
 /* Título e foto por grupo de anúncio: final da URL com ?r=serra */
-const qs = new URLSearchParams(location.search);
 if (qs.get('r') === 'serra') {
   document.getElementById('h1').textContent = 'Arquiteto em Petrópolis, Itaipava e Teresópolis: projeto e obra da sua casa de serra';
   const h = document.getElementById('heroimg');
@@ -320,6 +364,19 @@ const faq = [
   ['Vocês fazem projetos comerciais?', 'Sim, principalmente escritórios e espaços comerciais.']
 ];
 document.getElementById('faq').innerHTML = faq.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('');
+document.getElementById('faq').addEventListener('toggle', e => {
+  if (e.target.open) dl({ event: 'faq_open', faq_question: e.target.querySelector('summary').textContent });
+}, true);
+
+/* Envia o lead ao n8n sem atrasar a ida ao WhatsApp (sendBeacon sobrevive à troca de página).
+   Formato form-urlencoded: não exige liberação de CORS no n8n. */
+const enviarLead = dados => {
+  if (!CONFIG.webhook) return;
+  const corpo = new URLSearchParams(dados);
+  try { if (navigator.sendBeacon && navigator.sendBeacon(CONFIG.webhook, corpo)) return; } catch (e) {}
+  try { fetch(CONFIG.webhook, { method: 'POST', mode: 'no-cors', keepalive: true, body: corpo }); } catch (e) {}
+};
+const novoId = () => 'S-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
 
 /* Formulário compacto: nome + telefone, usado no topo e no contato */
 const mask = el => el.addEventListener('input', () => {
@@ -330,27 +387,50 @@ const mask = el => el.addEventListener('input', () => {
 });
 
 document.querySelectorAll('form.lead').forEach((f, i) => {
+  const pos = f.dataset.pos;
   f.innerHTML = `
     <input name="nome" aria-label="Nome" placeholder="Seu nome" autocomplete="name" id="nome${i}">
     <input name="telefone" aria-label="Telefone com DDD" placeholder="Telefone com DDD" type="tel" inputmode="tel" autocomplete="tel">
+    <span class="hp" aria-hidden="true"><input name="empresa" tabindex="-1" autocomplete="off"></span>
     <button class="btn" type="submit">${f.dataset.btn || 'Falar com o arquiteto'}</button>
     <p class="msg">Imóveis a partir de 70 m² no Rio e na Região Serrana.</p>`;
-  const [nome, tel] = f.querySelectorAll('input'), msg = f.querySelector('.msg');
+  const [nome, tel, hp] = f.querySelectorAll('input'), msg = f.querySelector('.msg');
   mask(tel);
+  let iniciou = false, enviado = false;
+  f.addEventListener('focusin', () => { if (!iniciou) { iniciou = true; dl({ event: 'form_start', form_position: pos }); } });
   f.addEventListener('submit', e => {
     e.preventDefault();
-    const n = nome.value.trim(), d = tel.value.replace(/\D/g, '');
-    const okN = n.length >= 2, okT = d.length >= 10 && d.length <= 11;
+    if (enviado) return;
+    const n = nome.value.trim().replace(/\s+/g, ' '), d = tel.value.replace(/\D/g, '');
+    const okN = n.length >= 2, okT = /^[1-9]{2}9?\d{8}$/.test(d);
     nome.setAttribute('aria-invalid', !okN); tel.setAttribute('aria-invalid', !okT);
-    if (!okN || !okT) { msg.textContent = !okN ? 'Informe seu nome.' : 'Informe um telefone com DDD.'; msg.classList.add('err'); return; }
-
-    window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ event: 'generate_lead', lead_source: 'lp_google_ads', form_position: f.dataset.pos });
-
+    if (!okN || !okT) {
+      msg.textContent = !okN ? 'Informe seu nome.' : 'Informe um telefone com DDD.'; msg.classList.add('err');
+      dl({ event: 'form_error', form_position: pos, error_field: !okN ? 'nome' : 'telefone' });
+      return;
+    }
+    enviado = true;
+    const robo = !!hp.value; // campo invisível preenchido = robô: não conta conversão nem cria card
+    const leadId = novoId();
     const texto = `Olá, Rafael! Meu nome é ${n} e meu telefone é (${d.slice(0,2)}) ${d.slice(2)}. Vim pelo site e gostaria de conversar sobre o projeto do meu imóvel.`;
-    const url = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(texto)}`;
-    f.outerHTML = `<p class="sent">Recebemos o seu contato! Abrindo o WhatsApp do escritório. Se não abrir, <a href="${url}">clique aqui</a>.</p>`;
-    setTimeout(() => { location.href = url; }, 900);
+    const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`;
+
+    let foi = false;
+    const irWhatsApp = () => { if (!foi) { foi = true; location.href = url; } };
+
+    if (!robo) {
+      const { ts, ...o } = origem;
+      enviarLead({ ...o, nome: n, telefone: '55' + d, lead_id: leadId, form_position: pos, funil: CONFIG.funil,
+        fonte: fonte(origem), dispositivo, pagina: pagina() });
+      // generate_lead = conversão do Google Ads. user_data alimenta as conversões otimizadas (telefone E.164).
+      // eventCallback: só vai para o WhatsApp depois que as tags do GTM dispararam (ou 1,5 s no máximo).
+      dl({ event: 'generate_lead', form_position: pos, lead_id: leadId, lead_source: 'lp_google_ads',
+        traffic_source: fonte(origem), value: 1, currency: 'BRL',
+        user_data: { phone_number: '+55' + d },
+        eventCallback: irWhatsApp, eventTimeout: 1500 });
+    }
+    f.outerHTML = `<p class="sent">Recebemos o seu contato! Abrindo o WhatsApp do escritório. Se não abrir, <a href="${url}" data-link="whatsapp_obrigado">clique aqui</a>.</p>`;
+    setTimeout(irWhatsApp, robo ? 900 : 1700); // garantia caso o GTM não responda
   });
 });
 
@@ -358,7 +438,10 @@ document.querySelectorAll('form.lead').forEach((f, i) => {
 const burger = document.getElementById('burger'), menu = document.getElementById('menu');
 const toggle = open => { burger.setAttribute('aria-expanded', open); menu.classList.toggle('open', open); };
 burger.addEventListener('click', () => toggle(burger.getAttribute('aria-expanded') !== 'true'));
-menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => toggle(false)));
+menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  toggle(false);
+  dl({ event: 'menu_click', menu_item: a.getAttribute('href').slice(1) });
+}));
 
 /* Botão fixo aparece quando o formulário do topo sai da tela */
 const sticky = document.getElementById('sticky');
@@ -367,8 +450,22 @@ new IntersectionObserver(([e]) => sticky.classList.toggle('show', !e.isIntersect
 
 /* Botões levam ao formulário do topo */
 document.querySelectorAll('[data-cta]').forEach(a => a.addEventListener('click', () => {
+  dl({ event: 'cta_click', cta_location: a.dataset.cta });
   setTimeout(() => document.getElementById('nome0')?.focus({ preventScroll: true }), 500);
 }));
+
+/* Links externos (Instagram, WhatsApp da tela de obrigado) */
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-link]');
+  if (a) dl({ event: 'link_click', link_type: a.dataset.link, link_url: a.href });
+});
+
+/* Rolagem: 50% e 90% da página */
+const marcos = [50, 90], feitos = new Set();
+addEventListener('scroll', () => {
+  const pct = (scrollY + innerHeight) / document.documentElement.scrollHeight * 100;
+  marcos.forEach(m => { if (pct >= m && !feitos.has(m)) { feitos.add(m); dl({ event: 'scroll_depth', percent: m }); } });
+}, { passive: true });
 }
 </script>
 </body>
