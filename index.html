@@ -412,7 +412,7 @@ document.querySelectorAll('form.lead').forEach((f, i) => {
     enviado = true;
     const robo = !!hp.value; // campo invisível preenchido = robô: não conta conversão nem cria card
     const leadId = novoId();
-    const texto = `Olá, Rafael! Meu nome é ${n} e meu telefone é (${d.slice(0,2)}) ${d.slice(2)}. Vim pelo site e gostaria de conversar sobre o projeto do meu imóvel.`;
+    const texto = `Olá, Rafael! Meu nome é ${n}. Vim pelo site e gostaria de conversar sobre o projeto do meu imóvel.`;
     const url = `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(texto)}`;
 
     let foi = false;
